@@ -1,0 +1,4 @@
+.env
+bootstrap
+*.zip
+.DS_Store
