@@ -10,7 +10,7 @@ var router *lmdrouter.Router
 
 func init() {
 	router = lmdrouter.NewRouter("")
-	router.Route("POST", "/harmonic-pattern", controllers.HarmonicPatternWebhook)
+	router.Route("POST", "/webhook/harmonic-pattern", controllers.HarmonicPatternWebhook)
 }
 
 func main() {
