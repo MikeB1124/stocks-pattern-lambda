@@ -59,7 +59,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 
 		if len(openOrders) > 0 {
-			log.Printf("Open orders exist for %+v\n", pattern.DisplaySymbol)
+			log.Printf("Open orders already exists for %+v\n", pattern.DisplaySymbol)
 			continue
 		}
 
@@ -118,5 +118,5 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 	}
 	log.Printf("Orders Created, Successful Orders: %d   Failed Orders: %d\n", len(webhookRequest.Data)-failedCount, failedCount)
-	return createResponse(Response{Message: fmt.Sprintf("Orders Created, Successful Orders: %d Failed Orders: %d\n", len(webhookRequest.Data)-failedCount, failedCount), StatusCode: 200})
+	return createResponse(Response{Message: fmt.Sprintf("Orders Created, Successful Orders: %d Failed Orders: %d", len(webhookRequest.Data)-failedCount, failedCount), StatusCode: 200})
 }
