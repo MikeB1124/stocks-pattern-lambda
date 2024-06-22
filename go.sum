@@ -1,8 +1,8 @@
 cloud.google.com/go v0.115.0 h1:CnFSK6Xo3lDYRoBKEcAtia6VSC837/ZkJuRduSFnr14=
 cloud.google.com/go v0.115.0/go.mod h1:8jIM5vVgoAEoiVxQ/O4BFTfHqulPZgs/ufEzMcFMdWU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/MikeB1124/stocks-lambda-utils/v2 v2.0.0 h1:KvGslD4tvx1T6PUNpPppfeuujBybQSnwl6Fw8u3FJsw=
-github.com/MikeB1124/stocks-lambda-utils/v2 v2.0.0/go.mod h1:eW0s2u+n8T7nqFQ6tJ0H+fiVrE0i4b6z2DrhXlp+k1w=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.0 h1:Qu2bB+C8agm1NqO+avFL3ATXAAtoMXHbN8wKT2dBjYs=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.0/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.4.0 h1:tcglbJ4agWXt9MNisK1cnoigRDmWEX85yb94IkQ52BU=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.4.0/go.mod h1:yQZTQ0N6Rfo8Sg7ishqAZ1i/ybMZBqo1xSW8M/LXqJg=
 github.com/aquasecurity/lmdrouter v0.4.4 h1:wh0qHM7s74HFOZiINI3fsBYyquBTWpF1U+JrcJbR+dA=
