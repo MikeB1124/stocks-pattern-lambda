@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -107,12 +108,15 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 
 		if err := db.InsertEntryOrder(alpacaEntryOrder); err != nil {
 			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)
+
 			// Cancel the order that was created
+			if err := alpaca.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
+				log.Printf("Failed to cancel order %+v\n", err)
+			}
 			failedCount++
-			return createResponse(Response{Message: err.Error(), StatusCode: 500})
+			continue
 		}
 	}
 	log.Printf("Orders Created, Successful Orders: %d   Failed Orders: %d\n", len(webhookRequest.Data)-failedCount, failedCount)
-
-	return createResponse(Response{Message: "Harmonic Pattern Webhook Processing Completed", StatusCode: 200})
+	return createResponse(Response{Message: fmt.Sprintf("Orders Created, Successful Orders: %d Failed Orders: %d\n", len(webhookRequest.Data)-failedCount, failedCount), StatusCode: 200})
 }

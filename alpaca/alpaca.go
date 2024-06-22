@@ -66,3 +66,11 @@ func GetAlpacaOrders(status string, symbols []string) ([]alpaca.Order, error) {
 	}
 	return orders, nil
 }
+
+func CancelAlpacaOrder(orderID string) error {
+	err := client.CancelOrder(orderID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
