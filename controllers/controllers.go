@@ -7,31 +7,26 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
-	"github.com/MikeB1124/stocks-pattern-lambda/alpaca"
-	"github.com/MikeB1124/stocks-pattern-lambda/db"
+	stockslambdautils "github.com/MikeB1124/stocks-lambda-utils"
+	"github.com/MikeB1124/stocks-pattern-lambda/clients"
 	"github.com/MikeB1124/stocks-pattern-lambda/stockutils"
-	"github.com/MikeB1124/stocks-pattern-lambda/utils"
 	"github.com/aws/aws-lambda-go/events"
 )
-
-type Response struct {
-	StatusCode int    `json:"statusCode"`
-	Message    string `json:"message"`
-}
 
 func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Processing harmonic pattern %+v\n", event)
 
-	var webhookRequest db.PatternWebhookRequest
+	var webhookRequest stockslambdautils.PatternWebhookRequest
 	err := json.Unmarshal([]byte(event.Body), &webhookRequest)
 	if err != nil {
-		return createResponse(Response{Message: err.Error(), StatusCode: 400})
+		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: err.Error(), StatusCode: 400})
 	}
 
 	if webhookRequest.MsgType != "pattern.notification" {
 		log.Printf("Invalid msg_type %+v\n", webhookRequest.MsgType)
-		return createResponse(Response{Message: "Invalid msg_type", StatusCode: 400})
+		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: "Invalid msg_type", StatusCode: 400})
 	}
 
 	failedCount := 0
@@ -52,7 +47,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 
 		// Check if open orders exist for the symbol
-		openOrders, err := alpaca.GetAlpacaOrders("open", []string{pattern.DisplaySymbol})
+		openOrders, err := clients.AlpacaClient.GetAlpacaOrders("open", []string{pattern.DisplaySymbol})
 		if err != nil {
 			log.Printf("Failed to get open orders %+v\n", err)
 			failedCount++
@@ -88,7 +83,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Buy %d shares at %f\n", qtyToBuy, entryPrice)
 
 		// Create order
-		order, err := alpaca.CreateBracketOrder(
+		order, err := clients.AlpacaClient.CreateBracketOrder(
 			pattern.DisplaySymbol,
 			entryPrice,
 			qtyToBuy,
@@ -103,16 +98,18 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Order created %+v\n", order)
 
 		// Insert entry order to database
-		var alpacaEntryOrder db.AlpacaEntryOrder
+		var alpacaEntryOrder stockslambdautils.AlpacaEntryOrder
 		alpacaEntryOrder.Order = order
 		alpacaEntryOrder.PatternData = pattern
-		alpacaEntryOrder.RecordUpdatedAt = utils.GetCurrentTime()
 
-		if err := db.InsertEntryOrder(alpacaEntryOrder); err != nil {
+		timeNow := time.Now().UTC()
+		alpacaEntryOrder.RecordUpdatedAt = &timeNow
+
+		if err := clients.MongoClient.InsertEntryOrder(alpacaEntryOrder); err != nil {
 			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)
 
 			// Cancel the order that was created
-			if err := alpaca.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
+			if err := clients.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
 				log.Printf("Failed to cancel order %+v\n", err)
 			}
 			failedCount++
@@ -120,5 +117,5 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 	}
 	log.Printf("Orders Created, Successful Orders: %d   Failed Orders: %d\n", len(webhookRequest.Data)-failedCount, failedCount)
-	return createResponse(Response{Message: fmt.Sprintf("Orders Created, Successful Orders: %d Failed Orders: %d", len(webhookRequest.Data)-failedCount, failedCount), StatusCode: 200})
+	return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: fmt.Sprintf("Orders Created, Successful Orders: %d Failed Orders: %d", len(webhookRequest.Data)-failedCount, failedCount), StatusCode: 200})
 }
