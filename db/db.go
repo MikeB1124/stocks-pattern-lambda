@@ -27,8 +27,8 @@ func init() {
 	mongoClient = client
 }
 
-func InsertPattern(patternData DBPatternData) error {
-	collection := mongoClient.Database("Stocks").Collection("patterns")
-	_, err := collection.InsertOne(context.TODO(), patternData)
+func InsertEntryOrder(order AlpacaEntryOrder) error {
+	collection := mongoClient.Database("Stocks").Collection("orders")
+	_, err := collection.InsertOne(context.TODO(), order)
 	return err
 }

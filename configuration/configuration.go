@@ -13,11 +13,18 @@ import (
 
 type Configration struct {
 	MongoDB MongoDB `json:"mongodb"`
+	Alpaca  Alpaca  `json:"alpaca"`
 }
 
 type MongoDB struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Alpaca struct {
+	PaperApiUrl string `json:"paperApiUrl"`
+	ApiKey      string `json:"apiKey"`
+	ApiSecret   string `json:"apiSecret"`
 }
 
 var Config Configration
