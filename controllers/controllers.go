@@ -11,6 +11,7 @@ import (
 	"github.com/MikeB1124/stocks-pattern-lambda/alpaca"
 	"github.com/MikeB1124/stocks-pattern-lambda/db"
 	"github.com/MikeB1124/stocks-pattern-lambda/stockutils"
+	"github.com/MikeB1124/stocks-pattern-lambda/utils"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -105,6 +106,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		var alpacaEntryOrder db.AlpacaEntryOrder
 		alpacaEntryOrder.Order = order
 		alpacaEntryOrder.PatternData = pattern
+		alpacaEntryOrder.RecordUpdatedAt = utils.GetCurrentTime()
 
 		if err := db.InsertEntryOrder(alpacaEntryOrder); err != nil {
 			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)

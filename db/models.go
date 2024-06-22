@@ -1,6 +1,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/alpacahq/alpaca-trade-api-go/v3/alpaca"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,8 +27,9 @@ type PatternData struct {
 }
 
 type AlpacaEntryOrder struct {
-	ObjectID    primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Order       *alpaca.Order      `json:"order" bson:"order"`
-	TradeProfit float64            `json:"tradeProfit" bson:"tradeProfit"`
-	PatternData PatternData        `json:"patternData" bson:"patternData"`
+	ObjectID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Order           *alpaca.Order      `json:"order" bson:"order"`
+	TradeProfit     float64            `json:"tradeProfit" bson:"tradeProfit"`
+	PatternData     PatternData        `json:"patternData" bson:"patternData"`
+	RecordUpdatedAt *time.Time         `json:"recordUpdatedAt" bson:"recordUpdatedAt"`
 }
