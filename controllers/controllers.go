@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	stockslambdautils "github.com/MikeB1124/stocks-lambda-utils"
-	"github.com/MikeB1124/stocks-pattern-lambda/clients"
+	stockslambdautils "github.com/MikeB1124/stocks-lambda-utils/v2"
+	"github.com/MikeB1124/stocks-pattern-lambda/configuration"
 	"github.com/MikeB1124/stocks-pattern-lambda/stockutils"
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -47,7 +47,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 
 		// Check if open orders exist for the symbol
-		openOrders, err := clients.AlpacaClient.GetAlpacaOrders("open", []string{pattern.DisplaySymbol})
+		openOrders, err := configuration.AlpacaClient.GetAlpacaOrders("open", []string{pattern.DisplaySymbol})
 		if err != nil {
 			log.Printf("Failed to get open orders %+v\n", err)
 			failedCount++
@@ -83,7 +83,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Buy %d shares at %f\n", qtyToBuy, entryPrice)
 
 		// Create order
-		order, err := clients.AlpacaClient.CreateBracketOrder(
+		order, err := configuration.AlpacaClient.CreateBracketOrder(
 			pattern.DisplaySymbol,
 			entryPrice,
 			qtyToBuy,
@@ -105,11 +105,11 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		timeNow := time.Now().UTC()
 		alpacaEntryOrder.RecordUpdatedAt = &timeNow
 
-		if err := clients.MongoClient.InsertEntryOrder(alpacaEntryOrder); err != nil {
+		if err := configuration.MongoClient.InsertEntryOrder(alpacaEntryOrder); err != nil {
 			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)
 
 			// Cancel the order that was created
-			if err := clients.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
+			if err := configuration.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
 				log.Printf("Failed to cancel order %+v\n", err)
 			}
 			failedCount++

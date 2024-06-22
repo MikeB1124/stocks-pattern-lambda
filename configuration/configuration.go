@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	stockslambdautils "github.com/MikeB1124/stocks-lambda-utils/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
@@ -28,6 +29,8 @@ type Alpaca struct {
 }
 
 var Config Configration
+var MongoClient stockslambdautils.MongoClient
+var AlpacaClient stockslambdautils.AlpacaClient
 
 func init() {
 	log.Println("Loading configuration...")
@@ -47,6 +50,11 @@ func init() {
 		log.Fatal(err)
 	}
 
+	MongoClient, err = stockslambdautils.NewMongoClient(lambdaConfig.MongoDB.Username, lambdaConfig.MongoDB.Password)
+	if err != nil {
+		log.Fatal(err)
+	}
+	AlpacaClient = stockslambdautils.NewAlpacaClient(lambdaConfig.Alpaca.ApiKey, lambdaConfig.Alpaca.ApiSecret, lambdaConfig.Alpaca.PaperApiUrl)
 	Config = lambdaConfig
 }
 
