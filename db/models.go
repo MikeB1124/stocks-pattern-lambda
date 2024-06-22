@@ -1,5 +1,10 @@
 package db
 
+import (
+	"github.com/alpacahq/alpaca-trade-api-go/v3/alpaca"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type PatternWebhookRequest struct {
 	MsgType string        `json:"msg_type" bson:"msg_type"`
 	Data    []PatternData `json:"data" bson:"data"`
@@ -20,14 +25,8 @@ type PatternData struct {
 }
 
 type AlpacaEntryOrder struct {
-	EntryOrderID     string      `json:"entryOrderID" bson:"entryOrderID"`
-	EntryOrderStatus string      `json:"entryOrderStatus" bson:"entryOrderStatus"`
-	Qty              int         `json:"qty" bson:"qty"`
-	ExitOrderID      string      `json:"exitOrderID" bson:"exitOrderID"`
-	ExitOrderStatus  string      `json:"exitOrderStatus" bson:"exitOrderStatus"`
-	TradeProfit      float64     `json:"tradeProfit" bson:"tradeProfit"`
-	Data             PatternData `json:"data" bson:"data"`
-	CreatedAt        string      `json:"createdAt" bson:"createdAt"`
-	EntryUpdatedAt   string      `json:"entryUpdatedAt" bson:"entryUpdatedAt"`
-	ExitUpdatedAt    string      `json:"exitUpdatedAt" bson:"exitUpdatedAt"`
+	ObjectID    primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Order       *alpaca.Order      `json:"order" bson:"order"`
+	TradeProfit float64            `json:"tradeProfit" bson:"tradeProfit"`
+	PatternData PatternData        `json:"patternData" bson:"patternData"`
 }
