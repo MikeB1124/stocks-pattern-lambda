@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
@@ -53,7 +52,6 @@ func init() {
 	}
 	AlpacaClient = stockslambdautils.NewAlpacaClient(lambdaConfig.Alpaca.ApiKey, lambdaConfig.Alpaca.ApiSecret, lambdaConfig.Alpaca.PaperApiUrl)
 	Config = lambdaConfig
-	fmt.Println(Config)
 }
 
 func GetConfig() Configration {

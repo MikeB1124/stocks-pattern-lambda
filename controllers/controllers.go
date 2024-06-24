@@ -21,6 +21,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 	var webhookRequest stockslambdautils.PatternWebhookRequest
 	err := json.Unmarshal([]byte(event.Body), &webhookRequest)
 	if err != nil {
+		log.Printf("Failed to unmarshal request %+v\n", err)
 		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: err.Error(), StatusCode: 400})
 	}
 
