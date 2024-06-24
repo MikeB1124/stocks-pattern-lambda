@@ -62,12 +62,17 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 			continue
 		}
 
-		// Parse entry price to float
-		entryPrice, err := strconv.ParseFloat(strings.Split(pattern.Entry, "_")[0], 64)
-		if err != nil {
-			log.Printf("Failed to parse entry price %+v\n", pattern.Entry)
-			failedCount++
-			continue
+		var entryPrice float64
+		if _, ok := pattern.Entry.(float64); ok {
+			entryPrice = pattern.Entry.(float64)
+		} else {
+			// Parse entry price to float
+			entryPrice, err = strconv.ParseFloat(strings.Split(pattern.Entry.(string), "_")[0], 64)
+			if err != nil {
+				log.Printf("Failed to parse entry price %+v\n", pattern.Entry)
+				failedCount++
+				continue
+			}
 		}
 
 		// Round to 2 decimal places
