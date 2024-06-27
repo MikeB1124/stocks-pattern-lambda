@@ -111,7 +111,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 
 		// Insert entry order to database
 		var alpacaTradeOrder stockslambdautils.AlpacaTrade
-		alpacaTradeOrder.Order = stockslambdautils.FormatAlpacaOrderForDB(*order)
+		alpacaTradeOrder.Order = stockslambdautils.FormatAlpacaOrderForDB(order)
 		alpacaTradeOrder.PatternData = pattern
 
 		timeNow := time.Now().UTC()
