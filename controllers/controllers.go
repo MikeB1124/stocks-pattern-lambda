@@ -89,11 +89,12 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Buy %d shares at %f\n", qtyToBuy, entryPrice)
 
 		// Create order
-		order, err := configuration.AlpacaClient.CreateBracketOrder(
+		order, err := configuration.AlpacaClient.CreateAlpacaOrder(
 			pattern.DisplaySymbol,
 			entryPrice,
 			qtyToBuy,
 			"buy",
+			"limit",
 		)
 		if err != nil {
 			log.Printf("Failed to create order %+v\n", err)
@@ -103,8 +104,8 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Order created %+v\n", order)
 
 		// Insert entry order to database
-		var alpacaEntryOrder stockslambdautils.AlpacaEntryOrder
-		alpacaEntryOrder.EntryOrder = order
+		var alpacaEntryOrder stockslambdautils.AlpacaTrade
+		alpacaEntryOrder.EntryOrder = stockslambdautils.FormatAlpacaOrderForDB(order)
 		alpacaEntryOrder.ExitOrder = nil
 		alpacaEntryOrder.PatternData = pattern
 
