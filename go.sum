@@ -33,6 +33,12 @@ github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.15 h1:BbqMMkhJdA0VyWwQsIWwV6TQe
 github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.15/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
 github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.16 h1:m6W/JWLJNAQ6uikzoz9MIKUxGX6Ho2G9Y8S6Wt3X/P0=
 github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.16/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.17 h1:Jq2X48OF0zp/Cp/ovM7gO3/76Dw7kltWb9acwVAggjA=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.1.17/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.2.0 h1:jFYWNX6r0mRvL8rK5xCX05wRvy9cvgAi1ba0JWnbSRQ=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.2.0/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.2.1 h1:bGG+dRBwz9S6T7ap35+SvS/ATYeSm7IVjPIJjr1ozxE=
+github.com/MikeB1124/stocks-lambda-utils/v2 v2.2.1/go.mod h1:zW1mATX04E32pbJRQWwGAd2gScTtR+2jMxEHHcCKRRE=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.4.0 h1:tcglbJ4agWXt9MNisK1cnoigRDmWEX85yb94IkQ52BU=
 github.com/alpacahq/alpaca-trade-api-go/v3 v3.4.0/go.mod h1:yQZTQ0N6Rfo8Sg7ishqAZ1i/ybMZBqo1xSW8M/LXqJg=
 github.com/aquasecurity/lmdrouter v0.4.4 h1:wh0qHM7s74HFOZiINI3fsBYyquBTWpF1U+JrcJbR+dA=

@@ -77,6 +77,8 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 
 		// Round to 2 decimal places
 		entryPrice = float64(int(entryPrice*100)) / 100
+		stopPrice := float64(int(pattern.StopLoss*100)) / 100
+		takeProfitPrice := float64(int(pattern.ProfitOne*100)) / 100
 
 		// Calculate the number of shares to buy
 		qtyToBuy, err := stockutils.SharesToBuy(entryPrice)
@@ -92,9 +94,13 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		order, err := configuration.AlpacaClient.CreateAlpacaOrder(
 			pattern.DisplaySymbol,
 			entryPrice,
+			stopPrice,
+			takeProfitPrice,
 			qtyToBuy,
 			"buy",
 			"limit",
+			"bracket",
+			"gtc",
 		)
 		if err != nil {
 			log.Printf("Failed to create order %+v\n", err)
@@ -104,19 +110,18 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Order created %+v\n", order)
 
 		// Insert entry order to database
-		var alpacaEntryOrder stockslambdautils.AlpacaTrade
-		alpacaEntryOrder.EntryOrder = stockslambdautils.FormatAlpacaOrderForDB(order)
-		alpacaEntryOrder.ExitOrder = nil
-		alpacaEntryOrder.PatternData = pattern
+		var alpacaTradeOrder stockslambdautils.AlpacaTrade
+		alpacaTradeOrder.Order = stockslambdautils.FormatAlpacaOrderForDB(*order)
+		alpacaTradeOrder.PatternData = pattern
 
 		timeNow := time.Now().UTC()
-		alpacaEntryOrder.RecordUpdatedAt = &timeNow
+		alpacaTradeOrder.RecordUpdatedAt = &timeNow
 
-		if err := configuration.MongoClient.InsertEntryOrder(alpacaEntryOrder); err != nil {
-			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)
+		if err := configuration.MongoClient.InsertEntryOrder(alpacaTradeOrder); err != nil {
+			log.Printf("FAILED inserting order %+v\n", alpacaTradeOrder)
 
 			// Cancel the order that was created
-			if err := configuration.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.EntryOrder.ID); err != nil {
+			if err := configuration.AlpacaClient.CancelAlpacaOrder(alpacaTradeOrder.Order.ID); err != nil {
 				log.Printf("Failed to cancel order %+v\n", err)
 			}
 			failedCount++
