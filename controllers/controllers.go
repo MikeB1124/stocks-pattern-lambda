@@ -77,8 +77,6 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 
 		// Round to 2 decimal places
 		entryPrice = float64(int(entryPrice*100)) / 100
-		stopPrice := float64(int(pattern.StopLoss*100)) / 100
-		takeProfitPrice := float64(int(pattern.ProfitOne*100)) / 100
 
 		// Calculate the number of shares to buy
 		qtyToBuy, err := stockutils.SharesToBuy(entryPrice)
@@ -95,8 +93,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 			pattern.DisplaySymbol,
 			entryPrice,
 			qtyToBuy,
-			stopPrice,
-			takeProfitPrice,
+			"buy",
 		)
 		if err != nil {
 			log.Printf("Failed to create order %+v\n", err)
@@ -107,7 +104,8 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 
 		// Insert entry order to database
 		var alpacaEntryOrder stockslambdautils.AlpacaEntryOrder
-		alpacaEntryOrder.Order = order
+		alpacaEntryOrder.EntryOrder = order
+		alpacaEntryOrder.ExitOrder = nil
 		alpacaEntryOrder.PatternData = pattern
 
 		timeNow := time.Now().UTC()
@@ -117,7 +115,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 			log.Printf("FAILED inserting order %+v\n", alpacaEntryOrder)
 
 			// Cancel the order that was created
-			if err := configuration.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.Order.ID); err != nil {
+			if err := configuration.AlpacaClient.CancelAlpacaOrder(alpacaEntryOrder.EntryOrder.ID); err != nil {
 				log.Printf("Failed to cancel order %+v\n", err)
 			}
 			failedCount++
