@@ -50,7 +50,7 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		}
 
 		// Check if open orders exist for the symbol
-		openOrders, err := configuration.AlpacaClient.GetAlpacaOrders("open", []string{pattern.DisplaySymbol})
+		openOrders, err := configuration.AlpacaClient.GetAlpacaOrders("open", []string{pattern.DisplaySymbol}, true)
 		if err != nil {
 			log.Printf("Failed to get open orders %+v\n", err)
 			failedCount++
