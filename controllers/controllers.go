@@ -15,8 +15,23 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
+var pacificTime, _ = time.LoadLocation("America/Los_Angeles")
+
 func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Processing harmonic pattern %+v\n", event)
+
+	// Do not allow trading on weekends
+	dateTimeNow := time.Now().In(pacificTime)
+	if dateTimeNow.Weekday() == time.Saturday || dateTimeNow.Weekday() == time.Sunday {
+		log.Println("Weekend, no trading allowed")
+		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: "Weekend, no trading allowed", StatusCode: 400})
+	}
+
+	// Do not allow trading after 1:00 PM PST
+	if dateTimeNow.Hour() >= 13 {
+		log.Println("This lambda does not allow trading after 1:00 PM PST")
+		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: "This lambda does not allow trading after 1:00 PM PST", StatusCode: 400})
+	}
 
 	var webhookRequest stockslambdautils.PatternWebhookRequest
 	err := json.Unmarshal([]byte(event.Body), &webhookRequest)
@@ -24,13 +39,11 @@ func HarmonicPatternWebhook(ctx context.Context, event events.APIGatewayProxyReq
 		log.Printf("Failed to unmarshal request %+v\n", err)
 		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: err.Error(), StatusCode: 400})
 	}
-	log.Printf("Unmarshaled Webhook data %+v", webhookRequest)
 
 	if webhookRequest.MsgType != "pattern.notification" {
 		log.Printf("Invalid msg_type %+v\n", webhookRequest.MsgType)
 		return stockslambdautils.CreateResponse(stockslambdautils.Response{Message: "Invalid msg_type", StatusCode: 400})
 	}
-	log.Printf("Harmonic pattern message type: %s", webhookRequest.MsgType)
 
 	failedCount := 0
 	log.Printf("Start Creating %d Order(s)\n", len(webhookRequest.Data))
